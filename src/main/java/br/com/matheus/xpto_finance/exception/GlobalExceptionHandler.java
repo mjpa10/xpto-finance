@@ -1,12 +1,15 @@
 package br.com.matheus.xpto_finance.exception;
 
+import tools.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -36,5 +39,37 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(erros);
+    }
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleMessageNotReadable(
+            HttpMessageNotReadableException ex) {
+
+        Throwable causa = ex;
+
+        while (causa != null && !(causa instanceof InvalidFormatException)) {
+            causa = causa.getCause();
+        }
+
+        if (causa instanceof InvalidFormatException ife
+                && ife.getTargetType().isEnum()) {
+
+            String campo = ife.getPath().isEmpty()
+                    ? "campo"
+                    : ife.getPath().get(0).getPropertyName();
+
+            String valoresAceitos =
+                    Arrays.toString(ife.getTargetType().getEnumConstants());
+
+            return ResponseEntity.badRequest().body(Map.of(
+                    campo,
+                    "Valor inválido: '" + ife.getValue()
+                            + "'. Valores aceitos: " + valoresAceitos
+            ));
+        }
+
+        return ResponseEntity.badRequest().body(Map.of(
+                "erro",
+                "JSON inválido ou malformado"
+        ));
     }
 }
