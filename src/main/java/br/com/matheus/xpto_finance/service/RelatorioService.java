@@ -1,6 +1,7 @@
 package br.com.matheus.xpto_finance.service;
 
 import br.com.matheus.xpto_finance.dto.RelatorioSaldoClienteDTO;
+import br.com.matheus.xpto_finance.dto.RelatorioSaldoPeriodoDTO;
 import br.com.matheus.xpto_finance.entity.Cliente;
 import br.com.matheus.xpto_finance.entity.Conta;
 import br.com.matheus.xpto_finance.entity.Endereco;
@@ -13,7 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,11 +29,7 @@ public class RelatorioService {
     @Transactional(readOnly = true)
     public RelatorioSaldoClienteDTO gerarRelatorioSaldoCliente(Long clienteId) {
 
-        // .filter(ativo) garante que um cliente desativado (soft delete)
-        // não gera relatório, mesmo que o ID ainda exista fisicamente no banco.
-        Cliente cliente = clienteRepository.findById(clienteId)
-                .filter(c -> Boolean.TRUE.equals(c.getAtivo()))
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+        Cliente cliente = buscarClienteAtivo(clienteId);
 
         long credito = 0;
         long debito = 0;
@@ -38,9 +38,8 @@ public class RelatorioService {
         BigDecimal saldoAtual = BigDecimal.ZERO;
 
         ///para cada Conta existente na lista de contas do cliente, execute o bloco abaixo.
-        for (Conta conta : cliente.getContas()) {
-            //Ignorando contas inativas
-            if (!Boolean.TRUE.equals(conta.getAtivo())) continue;
+        //Ignorando contas inativas
+        for (Conta conta : contasAtivas(cliente)) {
 
             saldoAtual = saldoAtual.add(conta.getSaldo());
 
@@ -64,8 +63,8 @@ public class RelatorioService {
                 } else {
                     debito++;
                 }
-                // null-safe: a movimentação inicial, por exemplo, pode não
-                // ter tarifa calculada, dependendo de como foi criada.
+
+                // soma as tarifas de todas as movimentações:
                 if (mov.getValorTarifa() != null) {
                     valorPagoMovimentacoes = valorPagoMovimentacoes.add(mov.getValorTarifa());
                 }
@@ -90,6 +89,99 @@ public class RelatorioService {
                 saldoInicial,
                 saldoAtual
         );
+    }
+
+
+    @Transactional(readOnly = true)
+    public RelatorioSaldoPeriodoDTO gerarRelatorioSaldoPeriodo(Long clienteId, LocalDate inicio, LocalDate fim) {
+
+        Cliente cliente = buscarClienteAtivo(clienteId);
+
+        LocalDateTime inicioPeriodo = inicio.atStartOfDay();
+        LocalDateTime fimPeriodo = fim.plusDays(1).atStartOfDay(); // limite exclusivo, cobre o dia inteiro do "fim"
+
+        long credito = 0;
+        long debito = 0;
+        BigDecimal valorPagoMovimentacoes = BigDecimal.ZERO;
+        BigDecimal saldoInicial = BigDecimal.ZERO;
+        BigDecimal saldoAtual = BigDecimal.ZERO;
+
+        for (Conta conta : contasAtivas(cliente)) {
+
+            saldoAtual = saldoAtual.add(conta.getSaldo());
+
+            // Percorre todas as movimentações da conta atual.
+            for (Movimentacao mov : conta.getMovimentacoes()) {
+
+                // Crédito representa entrada de dinheiro.
+                // Débito é transformado em valor negativo com negate().
+                BigDecimal valorAssinado = mov.getTipo() == TipoMovimentacao.CREDITO
+                        ? mov.getValor()
+                        : mov.getValor().negate();
+
+                if (mov.getDataMovimentacao().isBefore(inicioPeriodo)) {
+                    // antes do período: só entra no saldo inicial
+                    saldoInicial = saldoInicial.add(valorAssinado);
+                    saldoAtual = saldoAtual.add(valorAssinado);
+                } else if (mov.getDataMovimentacao().isBefore(fimPeriodo)) {
+                    // dentro do período: conta nas estatísticas e no saldo final
+                    saldoAtual = saldoAtual.add(valorAssinado);
+
+                    if (mov.getTipo() == TipoMovimentacao.CREDITO) {
+                        credito++;
+                    } else {
+                        debito++;
+                    }
+                    // soma as tarifas de todas as movimentações:
+                    if (mov.getValorTarifa() != null) {
+                        valorPagoMovimentacoes = valorPagoMovimentacoes.add(mov.getValorTarifa());
+                    }
+                }
+            }
+        }
+
+        String endereco = cliente.getEnderecos().stream()
+                .findFirst()
+                .map(this::formatarEndereco)
+                .orElse("Sem endereço cadastrado");
+
+        return new RelatorioSaldoPeriodoDTO(
+                inicio,
+                fim,
+                cliente.getNome(),
+                cliente.getDataCadastro(),
+                endereco,
+                credito,
+                debito,
+                credito + debito,
+                valorPagoMovimentacoes,
+                saldoInicial,
+                saldoAtual
+        );
+    }
+
+    // ---- Helpers privados, reaproveitados pelos dois relatórios acima ----
+
+    private Cliente buscarClienteAtivo(Long clienteId) {
+
+        // .filter(ativo) garante que um cliente desativado (soft delete)
+        // não gera relatório, mesmo que o ID ainda exista fisicamente no banco.
+        return clienteRepository.findById(clienteId)
+                .filter(c -> Boolean.TRUE.equals(c.getAtivo()))
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+    }
+
+    private List<Conta> contasAtivas(Cliente cliente) {
+        return cliente.getContas().stream()
+                .filter(c -> Boolean.TRUE.equals(c.getAtivo()))
+                .toList();
+    }
+
+    private String enderecoPrincipal(Cliente cliente) {
+        return cliente.getEnderecos().stream()
+                .findFirst()
+                .map(this::formatarEndereco)
+                .orElse("Sem endereço cadastrado");
     }
 
     // Monta a string "Rua, número, complemento, bairro, cidade, UF, CEP"

@@ -37,7 +37,7 @@ class ClienteDTOTest {
     }
 
     @Test
-    void PermitirClientePFComCpfPreenchido() {
+    void devePermitirClientePFComCpfPreenchido() {
         ClienteDTO dto = clienteBase();
         dto.setTipoPessoa(TipoPessoa.PF);
         dto.setCpf("12345678900");
@@ -48,7 +48,7 @@ class ClienteDTOTest {
     }
 
     @Test
-    void RejeitarClientePFSemCpf() {
+    void deveRejeitarClientePFSemCpf() {
         ClienteDTO dto = clienteBase();
         dto.setTipoPessoa(TipoPessoa.PF);
         dto.setCpf("");
@@ -61,7 +61,7 @@ class ClienteDTOTest {
     }
 
     @Test
-    void RejeitarClientePJSemCnpj() {
+    void deveRejeitarClientePJSemCnpj() {
         ClienteDTO dto = clienteBase();
         dto.setTipoPessoa(TipoPessoa.PJ);
         dto.setCnpj(null);
