@@ -1,12 +1,13 @@
 package br.com.matheus.xpto_finance.controller;
 
 import br.com.matheus.xpto_finance.dto.RelatorioSaldoClienteDTO;
+import br.com.matheus.xpto_finance.dto.RelatorioSaldoPeriodoDTO;
 import br.com.matheus.xpto_finance.service.RelatorioService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/clientes/{clienteId}/relatorios")
@@ -18,5 +19,14 @@ public class RelatorioController {
     @GetMapping("/saldo")
     public RelatorioSaldoClienteDTO relatorioSaldo(@PathVariable Long clienteId) {
         return service.gerarRelatorioSaldoCliente(clienteId);
+    }
+
+    //data enviada nesse formato yyyy-MM-dd, no service vai ser formatada em padrao br
+    @GetMapping("/saldo-periodo")
+    public RelatorioSaldoPeriodoDTO relatorioSaldoPeriodo(
+            @PathVariable Long clienteId,
+            @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate inicio,
+            @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate fim) {
+        return service.gerarRelatorioSaldoPeriodo(clienteId, inicio, fim);
     }
 }

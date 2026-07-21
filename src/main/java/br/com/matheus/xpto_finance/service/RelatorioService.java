@@ -108,8 +108,6 @@ public class RelatorioService {
 
         for (Conta conta : contasAtivas(cliente)) {
 
-            saldoAtual = saldoAtual.add(conta.getSaldo());
-
             // Percorre todas as movimentações da conta atual.
             for (Movimentacao mov : conta.getMovimentacoes()) {
 

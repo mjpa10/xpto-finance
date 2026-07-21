@@ -1,14 +1,16 @@
 package br.com.matheus.xpto_finance.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record RelatorioSaldoPeriodoDTO(
-        LocalDate periodoInicio,
-        LocalDate periodoFim,
+        @JsonFormat(pattern = "dd/MM/yyyy") LocalDate periodoInicio,
+        @JsonFormat(pattern = "dd/MM/yyyy") LocalDate periodoFim,
         String cliente,
-        LocalDateTime clienteDesde,
+        @JsonFormat(pattern = "dd/MM/yyyy") LocalDateTime clienteDesde,
         String endereco,
         long movimentacoesCredito,
         long movimentacoesDebito,

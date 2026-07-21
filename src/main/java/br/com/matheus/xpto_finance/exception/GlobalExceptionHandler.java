@@ -1,5 +1,6 @@
 package br.com.matheus.xpto_finance.exception;
 
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import tools.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,5 +80,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(Map.of("erro", ex.getMessage()));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String mensagem = "Valor inválido para o parâmetro '" + ex.getName() + "'. Verifique o formato da data {DD/MM/YYYY}.";
+        return ResponseEntity.badRequest().body(Map.of(ex.getName(), mensagem));
     }
 }
