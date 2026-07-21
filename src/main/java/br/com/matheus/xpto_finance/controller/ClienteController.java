@@ -19,33 +19,28 @@ import java.util.List;
 public class ClienteController {
 
     private final ClienteService service;
-    private final ClienteMapper mapper;
 
     @GetMapping
     public List<ClienteResponseDTO> listar() {
-        return service.listar().stream()
-                .map(mapper::toResponseDTO)
-                .toList();
+        return service.listar();
     }
 
     @GetMapping("/{id}")
     public ClienteResponseDTO buscarPorId(@PathVariable Long id) {
-        return mapper.toResponseDTO(service.buscarPorId(id));
+        return service.buscarPorId(id);
     }
 
     @PostMapping
     public ResponseEntity<ClienteResponseDTO> salvar(@Valid @RequestBody ClienteDTO dto) {
-        Cliente cliente = service.salvar(dto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapper.toResponseDTO(cliente));
+        ClienteResponseDTO response = service.salvar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-//so atualiza nome e telefone, nada que altere nos dados de historico e etc
+    //so atualiza nome e telefone, nada que altere nos dados de historico e etc
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteResponseDTO> atualizar( @PathVariable Long id,@Valid @RequestBody ClienteDTO dto) {
-
-        Cliente cliente = service.atualizar(id, dto);
-        return ResponseEntity.ok(mapper.toResponseDTO(cliente));
+    public ResponseEntity<ClienteResponseDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ClienteDTO dto) {
+        ClienteResponseDTO response = service.atualizar(id, dto);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

@@ -39,6 +39,9 @@ public class Movimentacao {
     @Column(nullable = false, length = 255)
     private String descricao;
 
+    @Column(name = "VALOR_TARIFA", precision = 15, scale = 2)
+    private BigDecimal valorTarifa;
+
     @CreationTimestamp
     @Column(
             name = "DATA_MOVIMENTACAO",

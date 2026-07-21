@@ -38,10 +38,7 @@ public class Cliente {
     private String cnpj;
 
     private String telefone;
-
-    @Column(nullable = false, precision = 15, scale = 2)
-    private BigDecimal saldoInicial;
-
+    
     @CreationTimestamp
     private LocalDateTime dataCadastro;
 
@@ -51,10 +48,10 @@ public class Cliente {
     // Todas as operações feitas no cliente também serão aplicadas aos endereços.
     // Endereços removidos da lista serão excluídos do banco.
     @OneToMany(
-            mappedBy = "cliente",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            mappedBy = "cliente", //Indica que a entidade Endereco é responsável pela chave estrangeira.
+            fetch = FetchType.LAZY, //Os endereços só serão carregados quando forem realmente acessados.
+            cascade = CascadeType.ALL, //Ao salvar o cliente, os novos endereços adicionados também podem ser salvos.
+            orphanRemoval = true // quando um endereço for removido da lista do cliente, ele será excluído da tabela ENDERECO
     )
     @Builder.Default
     private List<Endereco> enderecos = new ArrayList<>();

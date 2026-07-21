@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,9 +30,11 @@ public class ClienteDTO {
     @NotBlank(message = "Telefone é obrigatório")
     private String telefone;
 
-    @NotNull(message = "Saldo inicial é obrigatório")
-    @PositiveOrZero(message = "Saldo inicial não pode ser negativo")
-    private BigDecimal saldoInicial;
+    @NotEmpty(message = "O cliente deve possuir pelo menos um endereço")
+    private List<EnderecoDTO> enderecos;
+
+    @NotEmpty(message = "O cliente deve possuir pelo menos uma conta")
+    private List<ContaDTO> contas;
 
     @AssertTrue(message = "CPF é obrigatório para pessoa física")
     @JsonIgnore
