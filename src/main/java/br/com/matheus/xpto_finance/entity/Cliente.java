@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "CLIENTE")
@@ -44,4 +46,47 @@ public class Cliente {
     private LocalDateTime dataCadastro;
 
     private Boolean ativo;
+
+    // Um cliente pode possuir vários endereços.
+    // Todas as operações feitas no cliente também serão aplicadas aos endereços.
+    // Endereços removidos da lista serão excluídos do banco.
+    @OneToMany(
+            mappedBy = "cliente",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Builder.Default
+    private List<Endereco> enderecos = new ArrayList<>();
+
+    // Um cliente pode possuir várias contas.
+    // Ao cadastrar ou atualizar o cliente, suas contas também serão cadastradas ou atualizadas.
+    @OneToMany(
+            mappedBy = "cliente",
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            }
+    )
+    @Builder.Default
+    private List<Conta> contas = new ArrayList<>();
+
+    /// / Adiciona um endereço ao cliente e mantém o relacionamento dos dois lados.
+    public void adicionarEndereco(Endereco endereco) {
+        enderecos.add(endereco);
+        endereco.setCliente(this);
+    }
+
+    /// / Remove um endereço do cliente e desfaz o relacionamento.
+    public void removerEndereco(Endereco endereco) {
+        enderecos.remove(endereco);
+        endereco.setCliente(null);
+    }
+
+    // Adiciona uma conta ao cliente e mantém o relacionamento dos dois lados.
+    public void adicionarConta(Conta conta) {
+        contas.add(conta);
+        conta.setCliente(this);
+    }
 }
