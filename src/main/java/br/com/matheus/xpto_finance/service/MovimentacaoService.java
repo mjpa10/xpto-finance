@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Transactional
@@ -24,16 +25,22 @@ public class MovimentacaoService {
     private final MovimentacaoRepository repository;
     private final ContaRepository contaRepository;
     private final MovimentacaoMapper mapper;
+    private final TarifaService tarifaService;
 
     public MovimentacaoResponseDTO registrar(Long contaId, MovimentacaoDTO dto) {
         Conta conta = contaRepository.findById(contaId)
                 .filter(c -> Boolean.TRUE.equals(c.getAtivo()))
                 .orElseThrow(() -> new ResourceNotFoundException("Conta não encontrada"));
 
+        LocalDateTime agora = LocalDateTime.now();
+        //calcula o novo valor da tarifa
+        BigDecimal tarifa = tarifaService.calcularTarifa(conta.getCliente().getId(), agora);
+
         Movimentacao movimentacao = Movimentacao.builder()
                 .tipo(dto.getTipo())
                 .valor(dto.getValor())
                 .descricao(dto.getDescricao())
+                .valorTarifa(tarifa)
                 .build();
 
         conta.adicionarMovimentacao(movimentacao);
@@ -42,9 +49,6 @@ public class MovimentacaoService {
                 ? conta.getSaldo().add(dto.getValor())
                 : conta.getSaldo().subtract(dto.getValor());
         conta.setSaldo(novoSaldo);
-
-        //  calcular a tarifa chamando a function PL/SQL e preencher
-        // movimentacao.setValorTarifa(...) antes do save
 
         contaRepository.save(conta);
 
