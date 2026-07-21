@@ -1,9 +1,8 @@
 package br.com.matheus.xpto_finance.controller;
 
-import br.com.matheus.xpto_finance.dto.ClienteDTO;
-import br.com.matheus.xpto_finance.dto.ClienteResponseDTO;
-import br.com.matheus.xpto_finance.entity.Cliente;
-import br.com.matheus.xpto_finance.mapper.ClienteMapper;
+import br.com.matheus.xpto_finance.dto.cliente.ClienteDTO;
+import br.com.matheus.xpto_finance.dto.cliente.ClienteResponseDTO;
+import br.com.matheus.xpto_finance.dto.cliente.ClienteUpdateDTO;
 import br.com.matheus.xpto_finance.service.ClienteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +37,7 @@ public class ClienteController {
 
     //so atualiza nome e telefone, nada que altere nos dados de historico e etc
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteResponseDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ClienteDTO dto) {
+    public ResponseEntity<ClienteResponseDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ClienteUpdateDTO dto) {
         ClienteResponseDTO response = service.atualizar(id, dto);
         return ResponseEntity.ok(response);
     }

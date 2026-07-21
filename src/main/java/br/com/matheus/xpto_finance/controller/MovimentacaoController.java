@@ -1,7 +1,7 @@
 package br.com.matheus.xpto_finance.controller;
 
-import br.com.matheus.xpto_finance.dto.MovimentacaoDTO;
-import br.com.matheus.xpto_finance.dto.MovimentacaoResponseDTO;
+import br.com.matheus.xpto_finance.dto.movimentacao.MovimentacaoDTO;
+import br.com.matheus.xpto_finance.dto.movimentacao.MovimentacaoResponseDTO;
 import br.com.matheus.xpto_finance.service.MovimentacaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

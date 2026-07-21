@@ -1,7 +1,7 @@
 package br.com.matheus.xpto_finance.controller;
 
-import br.com.matheus.xpto_finance.dto.RelatorioSaldoClienteDTO;
-import br.com.matheus.xpto_finance.dto.RelatorioSaldoPeriodoDTO;
+import br.com.matheus.xpto_finance.dto.relatorio.RelatorioSaldoClienteDTO;
+import br.com.matheus.xpto_finance.dto.relatorio.RelatorioSaldoPeriodoDTO;
 import br.com.matheus.xpto_finance.service.RelatorioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

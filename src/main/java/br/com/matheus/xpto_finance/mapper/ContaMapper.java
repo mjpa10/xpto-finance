@@ -1,9 +1,7 @@
 package br.com.matheus.xpto_finance.mapper;
 
-import br.com.matheus.xpto_finance.dto.ContaResponseDTO;
-import br.com.matheus.xpto_finance.dto.MovimentacaoResponseDTO;
+import br.com.matheus.xpto_finance.dto.conta.ContaResponseDTO;
 import br.com.matheus.xpto_finance.entity.Conta;
-import br.com.matheus.xpto_finance.entity.Movimentacao;
 import org.springframework.stereotype.Component;
 
 @Component

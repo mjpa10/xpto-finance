@@ -1,8 +1,7 @@
 package br.com.matheus.xpto_finance.controller;
 
-import br.com.matheus.xpto_finance.dto.ClienteResponseDTO;
-import br.com.matheus.xpto_finance.dto.ContaDTO;
-import br.com.matheus.xpto_finance.dto.ContaResponseDTO;
+import br.com.matheus.xpto_finance.dto.conta.ContaDTO;
+import br.com.matheus.xpto_finance.dto.conta.ContaResponseDTO;
 import br.com.matheus.xpto_finance.service.ContaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,7 @@ public class ContaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    
+
     @PutMapping("/{id}")
     public ContaResponseDTO atualizar(@PathVariable Long clienteId, @PathVariable Long id, @Valid @RequestBody ContaDTO dto) {
         return service.atualizar(clienteId, id, dto);

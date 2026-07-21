@@ -1,19 +1,14 @@
 package br.com.matheus.xpto_finance.mapper;
 
-import br.com.matheus.xpto_finance.dto.ClienteResponseDTO;
-import br.com.matheus.xpto_finance.dto.ContaResponseDTO;
-import br.com.matheus.xpto_finance.dto.EnderecoResponseDTO;
-import br.com.matheus.xpto_finance.dto.MovimentacaoResponseDTO;
+import br.com.matheus.xpto_finance.dto.cliente.ClienteResponseDTO;
+import br.com.matheus.xpto_finance.dto.conta.ContaResponseDTO;
+import br.com.matheus.xpto_finance.dto.Endereco.EnderecoResponseDTO;
 import br.com.matheus.xpto_finance.entity.Cliente;
 import br.com.matheus.xpto_finance.entity.Conta;
 import br.com.matheus.xpto_finance.entity.Endereco;
-import br.com.matheus.xpto_finance.entity.Movimentacao;
-import br.com.matheus.xpto_finance.enums.TipoMovimentacao;
 import br.com.matheus.xpto_finance.enums.TipoPessoa;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Component

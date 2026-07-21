@@ -1,7 +1,7 @@
 package br.com.matheus.xpto_finance.service;
 
-import br.com.matheus.xpto_finance.dto.RelatorioSaldoClienteDTO;
-import br.com.matheus.xpto_finance.dto.RelatorioSaldoPeriodoDTO;
+import br.com.matheus.xpto_finance.dto.relatorio.RelatorioSaldoClienteDTO;
+import br.com.matheus.xpto_finance.dto.relatorio.RelatorioSaldoPeriodoDTO;
 import br.com.matheus.xpto_finance.entity.Cliente;
 import br.com.matheus.xpto_finance.entity.Conta;
 import br.com.matheus.xpto_finance.entity.Endereco;

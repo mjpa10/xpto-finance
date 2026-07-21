@@ -1,17 +1,20 @@
 package br.com.matheus.xpto_finance.service;
 
-import br.com.matheus.xpto_finance.dto.ClienteDTO;
-import br.com.matheus.xpto_finance.dto.ClienteResponseDTO;
-import br.com.matheus.xpto_finance.dto.EnderecoDTO;
-import br.com.matheus.xpto_finance.dto.ContaDTO;
+import br.com.matheus.xpto_finance.dto.cliente.ClienteDTO;
+import br.com.matheus.xpto_finance.dto.cliente.ClienteResponseDTO;
+import br.com.matheus.xpto_finance.dto.Endereco.EnderecoDTO;
+import br.com.matheus.xpto_finance.dto.cliente.ClienteUpdateDTO;
+import br.com.matheus.xpto_finance.dto.conta.ContaDTO;
 import br.com.matheus.xpto_finance.entity.Cliente;
 import br.com.matheus.xpto_finance.entity.Conta;
 import br.com.matheus.xpto_finance.entity.Endereco;
 import br.com.matheus.xpto_finance.entity.Movimentacao;
 import br.com.matheus.xpto_finance.enums.TipoMovimentacao;
+import br.com.matheus.xpto_finance.exception.OperacaoNaoPermitidaException;
 import br.com.matheus.xpto_finance.exception.ResourceNotFoundException;
 import br.com.matheus.xpto_finance.mapper.ClienteMapper;
 import br.com.matheus.xpto_finance.repository.ClienteRepository;
+import br.com.matheus.xpto_finance.repository.ContaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,7 @@ import java.util.List;
 public class ClienteService {
 
     private final ClienteRepository repository;
+    private final ContaRepository contaRepository;
     private final ClienteMapper mapper;
 
     public ClienteResponseDTO salvar(ClienteDTO dto) {
@@ -56,6 +60,13 @@ public class ClienteService {
         }
 
         for (ContaDTO contaDTO : dto.getContas()) {
+
+            // checa se ja existe conta
+            if (contaRepository.existsByAgenciaAndNumero(contaDTO.getAgencia(), contaDTO.getNumero())) {
+                throw new OperacaoNaoPermitidaException(
+                        "Já existe uma conta com agência " + contaDTO.getAgencia()
+                                + " e número " + contaDTO.getNumero());
+            }
 
             Conta conta = Conta.builder()
                     .agencia(contaDTO.getAgencia())
@@ -98,7 +109,7 @@ public class ClienteService {
         return mapper.toResponseDTO(cliente);
     }
 
-    public ClienteResponseDTO atualizar(Long id, ClienteDTO dto) {
+    public ClienteResponseDTO atualizar(Long id, ClienteUpdateDTO dto) {
 
         Cliente cliente = repository.findById(id)
                 .filter(c -> Boolean.TRUE.equals(c.getAtivo()))

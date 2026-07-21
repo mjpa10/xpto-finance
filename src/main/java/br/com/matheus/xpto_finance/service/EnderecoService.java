@@ -1,7 +1,7 @@
 package br.com.matheus.xpto_finance.service;
 
-import br.com.matheus.xpto_finance.dto.EnderecoDTO;
-import br.com.matheus.xpto_finance.dto.EnderecoResponseDTO;
+import br.com.matheus.xpto_finance.dto.Endereco.EnderecoDTO;
+import br.com.matheus.xpto_finance.dto.Endereco.EnderecoResponseDTO;
 import br.com.matheus.xpto_finance.entity.Cliente;
 import br.com.matheus.xpto_finance.entity.Endereco;
 import br.com.matheus.xpto_finance.exception.ResourceNotFoundException;

@@ -1,7 +1,7 @@
 package br.com.matheus.xpto_finance.controller;
 
-import br.com.matheus.xpto_finance.dto.EnderecoDTO;
-import br.com.matheus.xpto_finance.dto.EnderecoResponseDTO;
+import br.com.matheus.xpto_finance.dto.Endereco.EnderecoDTO;
+import br.com.matheus.xpto_finance.dto.Endereco.EnderecoResponseDTO;
 import br.com.matheus.xpto_finance.service.EnderecoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class EnderecoController {
         EnderecoResponseDTO responseDTO = service.criar(clienteId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
-    
+
     @PutMapping("/{id}")
     public EnderecoResponseDTO atualizar(@PathVariable Long clienteId, @PathVariable Long id, @Valid @RequestBody EnderecoDTO dto) {
         return service.atualizar(clienteId, id, dto);

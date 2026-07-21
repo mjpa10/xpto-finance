@@ -1,4 +1,4 @@
-package br.com.matheus.xpto_finance.dto;
+package br.com.matheus.xpto_finance.dto.Endereco;
 
 import lombok.Builder;
 

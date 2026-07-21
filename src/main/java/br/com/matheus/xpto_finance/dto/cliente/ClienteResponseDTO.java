@@ -1,5 +1,7 @@
-package br.com.matheus.xpto_finance.dto;
+package br.com.matheus.xpto_finance.dto.cliente;
 
+import br.com.matheus.xpto_finance.dto.conta.ContaResponseDTO;
+import br.com.matheus.xpto_finance.dto.Endereco.EnderecoResponseDTO;
 import br.com.matheus.xpto_finance.enums.TipoPessoa;
 import lombok.Builder;
 

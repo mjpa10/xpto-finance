@@ -1,4 +1,4 @@
-package br.com.matheus.xpto_finance.dto;
+package br.com.matheus.xpto_finance.dto.movimentacao;
 
 import br.com.matheus.xpto_finance.enums.TipoMovimentacao;
 import lombok.Builder;

@@ -1,6 +1,6 @@
 package br.com.matheus.xpto_finance.mapper;
 
-import br.com.matheus.xpto_finance.dto.EnderecoResponseDTO;
+import br.com.matheus.xpto_finance.dto.Endereco.EnderecoResponseDTO;
 import br.com.matheus.xpto_finance.entity.Endereco;
 import org.springframework.stereotype.Component;
 

@@ -1,5 +1,8 @@
 package br.com.matheus.xpto_finance.dto;
 
+import br.com.matheus.xpto_finance.dto.Endereco.EnderecoDTO;
+import br.com.matheus.xpto_finance.dto.cliente.ClienteDTO;
+import br.com.matheus.xpto_finance.dto.conta.ContaDTO;
 import br.com.matheus.xpto_finance.enums.TipoConta;
 import br.com.matheus.xpto_finance.enums.TipoPessoa;
 import jakarta.validation.ConstraintViolation;

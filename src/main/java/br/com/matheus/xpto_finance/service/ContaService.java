@@ -1,7 +1,7 @@
 package br.com.matheus.xpto_finance.service;
 
-import br.com.matheus.xpto_finance.dto.ContaDTO;
-import br.com.matheus.xpto_finance.dto.ContaResponseDTO;
+import br.com.matheus.xpto_finance.dto.conta.ContaDTO;
+import br.com.matheus.xpto_finance.dto.conta.ContaResponseDTO;
 import br.com.matheus.xpto_finance.entity.Cliente;
 import br.com.matheus.xpto_finance.entity.Conta;
 import br.com.matheus.xpto_finance.entity.Movimentacao;

@@ -1,11 +1,12 @@
-package br.com.matheus.xpto_finance.dto;
+package br.com.matheus.xpto_finance.dto.cliente;
 
+import br.com.matheus.xpto_finance.dto.conta.ContaDTO;
+import br.com.matheus.xpto_finance.dto.Endereco.EnderecoDTO;
 import br.com.matheus.xpto_finance.enums.TipoPessoa;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
