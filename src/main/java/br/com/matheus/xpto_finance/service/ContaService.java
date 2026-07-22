@@ -11,6 +11,7 @@ import br.com.matheus.xpto_finance.exception.ResourceNotFoundException;
 import br.com.matheus.xpto_finance.mapper.ContaMapper;
 import br.com.matheus.xpto_finance.repository.ClienteRepository;
 import br.com.matheus.xpto_finance.repository.ContaRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,8 @@ public class ContaService {
     private final ContaRepository repository;
     private final ClienteRepository clienteRepository;
     private final ContaMapper mapper;
+    //estava com problema de sempre que criava um cliente, a data vinha vazia, apesar de no banco ter savo, esse entity manager serve para resolver isso
+    private final EntityManager entityManager;
 
     public ContaResponseDTO criar(Long clienteId, ContaDTO dto) {
         Cliente cliente = clienteRepository.findById(clienteId)
@@ -53,6 +56,12 @@ public class ContaService {
         conta.adicionarMovimentacao(movimentacaoInicial);
 
         Conta contaSalva = repository.save(conta);
+
+        // força o banco a "devolver" os valores gerados por ele mesmo
+        // (dataCadastro do cliente, dataAbertura de cada conta)
+        entityManager.flush();
+        entityManager.refresh(contaSalva);
+
         return mapper.toResponseDTO(contaSalva);
     }
 

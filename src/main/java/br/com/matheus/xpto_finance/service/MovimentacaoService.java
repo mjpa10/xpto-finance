@@ -9,6 +9,7 @@ import br.com.matheus.xpto_finance.exception.ResourceNotFoundException;
 import br.com.matheus.xpto_finance.mapper.MovimentacaoMapper;
 import br.com.matheus.xpto_finance.repository.ContaRepository;
 import br.com.matheus.xpto_finance.repository.MovimentacaoRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ public class MovimentacaoService {
     private final ContaRepository contaRepository;
     private final MovimentacaoMapper mapper;
     private final TarifaService tarifaService;
+    private final EntityManager entityManager;
 
     public MovimentacaoResponseDTO registrar(Long contaId, MovimentacaoDTO dto) {
         Conta conta = contaRepository.findById(contaId)
@@ -50,12 +52,19 @@ public class MovimentacaoService {
                 : conta.getSaldo().subtract(dto.getValor());
         conta.setSaldo(novoSaldo);
 
-        contaRepository.save(conta);
+        Movimentacao movimentacaoSalva = repository.save(movimentacao);
 
-        return mapper.toResponseDTO(movimentacao);
+        entityManager.flush();
+        entityManager.refresh(movimentacaoSalva);
+
+        return mapper.toResponseDTO(movimentacaoSalva);
     }
 
     public List<MovimentacaoResponseDTO> listarPorConta(Long contaId) {
+        contaRepository.findById(contaId)
+                .filter(c -> Boolean.TRUE.equals(c.getAtivo()))
+                .orElseThrow(() -> new ResourceNotFoundException("Conta não encontrada"));
+
         return repository.findAllByContaIdOrderByDataMovimentacaoDesc(contaId).stream()
                 .map(mapper::toResponseDTO)
                 .toList();

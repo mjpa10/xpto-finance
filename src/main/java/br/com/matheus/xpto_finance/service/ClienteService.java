@@ -15,6 +15,7 @@ import br.com.matheus.xpto_finance.exception.ResourceNotFoundException;
 import br.com.matheus.xpto_finance.mapper.ClienteMapper;
 import br.com.matheus.xpto_finance.repository.ClienteRepository;
 import br.com.matheus.xpto_finance.repository.ContaRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ public class ClienteService {
     private final ClienteRepository repository;
     private final ContaRepository contaRepository;
     private final ClienteMapper mapper;
+    private final EntityManager entityManager;
 
     public ClienteResponseDTO salvar(ClienteDTO dto) {
 
@@ -87,6 +89,14 @@ public class ClienteService {
         }
 
         Cliente clienteSalvo = repository.save(cliente);
+
+        // força o banco a "devolver" os valores gerados por ele mesmo
+        // (dataCadastro do cliente, dataAbertura de cada conta)
+        entityManager.flush();
+        entityManager.refresh(clienteSalvo);
+        for (Conta conta : clienteSalvo.getContas()) {
+            entityManager.refresh(conta);
+        }
 
         return mapper.toResponseDTO(clienteSalvo);
     }
